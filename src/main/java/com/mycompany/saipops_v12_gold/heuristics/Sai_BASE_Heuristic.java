@@ -22,16 +22,16 @@ public abstract class Sai_BASE_Heuristic {
      
     protected  TreeMap<String, Double>  objectiveFunctionMap;
    
-    protected  TreeMap<String , Double>  neutralVariables_WithScore   = new  TreeMap<String , Double>   ();
+    protected  TreeMap<String , Double>  fractionalNeutralVariables_WithScore   = new  TreeMap<String , Double>   ();
     
     //secondary variable and the primary variables it will fix if the lowestKnownSecondaryDimension is 1 
     protected  TreeMap<String , TreeSet<String>  >  secondaryVariables_At_DimensionOne   = new  TreeMap<String , TreeSet<String>  >   ();
    
-    protected int lowestKnownPrimaryDimension = BILLION;
+    protected int lowestKnownFractionalPrimaryDimension = BILLION;
     protected  TreeMap<String , Double>  fractionalPrimaryVariablesWithFrequency_AtLowestDim   = new  TreeMap<String , Double>   ();
-    //primary variable and the secondary variables it will fix if the lowestKnownPrimaryDimension is 1 
+    //primary variable and the secondary variables it will fix if the lowestKnownFractionalPrimaryDimension is 1 
     protected  TreeMap<String , TreeSet<String>  >  primaryVariables_At_DimensionOne   = new  TreeMap<String , TreeSet<String>  >   ();
-    
+     
     
     public Sai_BASE_Heuristic (  Set<Attributes> attributes ,     
             TreeMap<String, Double>  objectiveFunctionMap  ){
@@ -45,9 +45,9 @@ public abstract class Sai_BASE_Heuristic {
                 double score = Math.pow( TWO, TWO - attr.constraintSize);
                 for (String neutralVar : attr.fractionalNeutralVariables){
                     //
-                    Double currentScore =  neutralVariables_WithScore.get (neutralVar)  ;
+                    Double currentScore =  fractionalNeutralVariables_WithScore.get (neutralVar)  ;
                     if (null == currentScore)currentScore= DOUBLE_ZERO;
-                    neutralVariables_WithScore.put (neutralVar,score+ currentScore)  ;
+                    fractionalNeutralVariables_WithScore.put (neutralVar,score+ currentScore)  ;
                 }
             }
             
@@ -62,18 +62,19 @@ public abstract class Sai_BASE_Heuristic {
                             secondaryVariables_At_DimensionOne.put (sVar, current) ; 
                         }                        
                     }       
+                           
             }
             
                              
             if (attr.hasFractionalPrimaryVariables()){ 
                                
-                if (lowestKnownPrimaryDimension > attr.primaryDimension){                    
-                    lowestKnownPrimaryDimension = attr.primaryDimension;                   
+                if (lowestKnownFractionalPrimaryDimension > attr.primaryDimension){                    
+                    lowestKnownFractionalPrimaryDimension = attr.primaryDimension;                   
                     this.fractionalPrimaryVariablesWithFrequency_AtLowestDim.clear();     
                      
                 }
                 
-                if (lowestKnownPrimaryDimension == attr.primaryDimension){
+                if (lowestKnownFractionalPrimaryDimension == attr.primaryDimension){
                     for (String var: attr.fractionalPrimaryVariables  ){
                         //
                         Double currentFreq= fractionalPrimaryVariablesWithFrequency_AtLowestDim .get ( var);
@@ -93,7 +94,7 @@ public abstract class Sai_BASE_Heuristic {
             } 
             
         }//for all attrs
-             
+           
     }//end constructor method
         
     public String getBranchingVariable() {
@@ -115,7 +116,7 @@ public abstract class Sai_BASE_Heuristic {
        
         TreeSet<String> dominatedVariables = new TreeSet<String>   ();
          
-        if (this.lowestKnownPrimaryDimension==ONE){
+        if (this.lowestKnownFractionalPrimaryDimension==ONE){
             //run BCP at level 1 and identify dominated triggers        
             
             for (;;){
@@ -127,10 +128,11 @@ public abstract class Sai_BASE_Heuristic {
                     TreeSet<String> currentImplications  = primaryVariables_At_DimensionOne.get(key);
                     TreeSet<String> copyOfcurrentImplications = new  TreeSet<String>  ();
                     copyOfcurrentImplications.addAll(currentImplications);
+                    if (candidates.contains(key)){
+                        dominatedVariables.addAll(currentImplications);
+                    }
                     for (String impl: currentImplications){
-                        if (candidates.contains(key)){
-                            dominatedVariables.add(impl);
-                        }
+                        
                         TreeSet<String> implicationsToAdd =   primaryVariables_At_DimensionOne.get(impl);
                         if (implicationsToAdd !=null) {
                             copyOfcurrentImplications.addAll( implicationsToAdd);                            
@@ -153,9 +155,9 @@ public abstract class Sai_BASE_Heuristic {
     // 
     private TreeSet<String>  getMOMS  (){
         TreeSet<String>  candidates   = new TreeSet<String> ();
-        candidates.addAll( neutralVariables_WithScore.keySet());
+        candidates.addAll(fractionalNeutralVariables_WithScore.keySet());
         //get candidates with highest score
-        return     MathUtils.getMaxObjMagn(candidates, neutralVariables_WithScore  ) ;        
+        return     MathUtils.getMaxObjMagn(candidates, fractionalNeutralVariables_WithScore  ) ;        
     }
      
     

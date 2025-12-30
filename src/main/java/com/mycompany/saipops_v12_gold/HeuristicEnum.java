@@ -12,10 +12,7 @@ package com.mycompany.saipops_v12_gold;
  */
 public enum HeuristicEnum {
      
-    POPS  ,   
-    BOBS,
-     
-    
-    
+    POPS  , 
+   
     NATIVE_CPLEX;    
 }

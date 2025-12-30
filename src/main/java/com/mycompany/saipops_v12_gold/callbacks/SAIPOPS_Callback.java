@@ -77,17 +77,11 @@ public class SAIPOPS_Callback extends IloCplex.BranchCallback{
                     }
                 }
                 
-                Sai_BASE_Heuristic branchingHeuristic  =null;
-                if (HEURISTIC_TO_USE.equals(BOBS)){
-                    branchingHeuristic=new SaiBOBS_Heuristic(   attributes , objectiveFunctionMap );;
-                }else {
-                    //default
-                    branchingHeuristic=new SaiPOPS_Heuristic(   attributes , objectiveFunctionMap );;
-                }
-                                
+                Sai_BASE_Heuristic branchingHeuristic  =   new Sai_POPS_Heuristic(   attributes , objectiveFunctionMap );
+                         
                 //always run the heuristic even if we use native cplex
                 branchingVar = branchingHeuristic .getBranchingVariable();
-                                                
+                                   
                 //overrule cplex branching
                 if ( ! HEURISTIC_TO_USE.equals( NATIVE_CPLEX)) overruleCplexBranching (branchingVar) ; 
                 

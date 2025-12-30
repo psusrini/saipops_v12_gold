@@ -53,7 +53,7 @@ public class Parameters {
     public static final int PERIOD_DURATION_IN_SECONDS =60*60; //60 minute periods
      
     public static final HeuristicEnum HEURISTIC_TO_USE = HeuristicEnum.POPS;
-    public static final Boolean USE_OPTIMISTIC_DIMENSIONING = false;
+    public static final Boolean USE_OPTIMISTIC_DIMENSIONING = true;
     
     public static final String PRESOLVED_MIP_FILENAME =              
             System.getProperty("os.name").toLowerCase().contains("win") ?
@@ -61,7 +61,7 @@ public class Parameters {
     //  "c:\\temp\\mips\\2club200v.pre.sav":
     // "c:\\temp\\mips\\LTL8.pre.sav": 
             
-   "c:\\temp\\mips\\bab1.pre.sav":
+    // "c:\\temp\\mips\\bab1.pre.sav":
             
     //   "c:\\temp\\mips\\bab2.pre.sav":
     //   "c:\\temp\\mips\\bab6.pre.sav":
@@ -70,7 +70,7 @@ public class Parameters {
             
     // "c:\\temp\\mips\\ds.pre.sav":    
     
-    //   "c:\\temp\\mips\\hanoi5.pre.sav":  
+      "c:\\temp\\mips\\hanoi5.pre.sav":  
             
     //   "c:\\temp\\mips\\ivu52.pre.sav":
             

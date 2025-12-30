@@ -21,10 +21,10 @@ import java.util.TreeSet;
  * 
  *  
  */
-public   class SaiBOBS_Heuristic  extends Sai_BASE_Heuristic{
+public   class Sai_POPS_Heuristic  extends Sai_BASE_Heuristic{
     //
        
-    public SaiBOBS_Heuristic (  Set<Attributes> attributes ,     
+    public Sai_POPS_Heuristic (  Set<Attributes> attributes ,     
             TreeMap<String, Double>  objectiveFunctionMap  ){
          super ( attributes ,     objectiveFunctionMap);
     } 
@@ -32,14 +32,14 @@ public   class SaiBOBS_Heuristic  extends Sai_BASE_Heuristic{
     @Override
     protected TreeSet<String>  selectBranchingVariable  (){
         TreeSet<String>  candidates = new  TreeSet<String> ();
-        
+         
         candidates.addAll( this.fractionalPrimaryVariablesWithFrequency_AtLowestDim.keySet());
-        
-        //largest objective 
-        candidates = MathUtils.getMaxObjMagn(candidates, getBCP_ObjMagnMap(candidates) )  ;  
         
         TreeSet<String>  apex= this.getApexVariables(candidates) ;                
         if (!apex.isEmpty())candidates=apex;
+           
+        //largest objective 
+        candidates = MathUtils.getMaxObjMagn(candidates, getBCP_ObjMagnMap(candidates) )  ;  
         
         //tie break on highest frequency.
         candidates = MathUtils.getMaxObjMagn(candidates, this.fractionalPrimaryVariablesWithFrequency_AtLowestDim )  ;  
@@ -58,33 +58,41 @@ public   class SaiBOBS_Heuristic  extends Sai_BASE_Heuristic{
             modifiedObjFuncMap.put (var, Math.abs ( this.objectiveFunctionMap.get(var))) ;
         }
         
-        //now run BCP at level 2 and identify dominated triggers        
+        TreeSet<String>  exists = new TreeSet<String>  ();
+        exists.addAll(secondaryVariables_At_DimensionOne.keySet());
+        exists.retainAll(candidates);      
+        
         TreeSet<String> dominatedVariables = new TreeSet<String>   ();
-         
-        for (;;){
-            int  numAdditionsInThisIteration = ZERO;
-            for (String key : secondaryVariables_At_DimensionOne.keySet()){
-                 
-                if (dominatedVariables.contains(key))  continue;
-                //
-                TreeSet<String> currentImplications  = secondaryVariables_At_DimensionOne.get(key);
-                TreeSet<String> copyOfcurrentImplications = new  TreeSet<String>  ();
-                copyOfcurrentImplications.addAll(currentImplications);
-                for (String impl: currentImplications){
+        if (!exists.isEmpty()){
+            // run BCP at level 2 and identify dominated triggers    
+
+            for (;;){
+                int  numAdditionsInThisIteration = ZERO;
+                for (String key : secondaryVariables_At_DimensionOne.keySet()){
+
+                    if (dominatedVariables.contains(key))  continue;
+                    //
+                    TreeSet<String> currentImplications  = secondaryVariables_At_DimensionOne.get(key);
+                    TreeSet<String> copyOfcurrentImplications = new  TreeSet<String>  ();
+                    copyOfcurrentImplications.addAll(currentImplications);
                     if (candidates.contains(key)){
-                        dominatedVariables.add(impl);
+                        dominatedVariables.addAll( currentImplications);
                     }
-                    TreeSet<String> implicationsToAdd =   secondaryVariables_At_DimensionOne.get(impl);
-                    if (implicationsToAdd !=null) {
-                        copyOfcurrentImplications.addAll( implicationsToAdd);
+                    for (String impl: currentImplications){
                         
-                    }                    
-                }        
-                numAdditionsInThisIteration += (copyOfcurrentImplications.size() - currentImplications.size()) ;
-                secondaryVariables_At_DimensionOne.put(key,copyOfcurrentImplications );                
-            }            
-            if (numAdditionsInThisIteration==ZERO) break;
+                        TreeSet<String> implicationsToAdd =   secondaryVariables_At_DimensionOne.get(impl);
+                        if (implicationsToAdd !=null) {
+                            copyOfcurrentImplications.addAll( implicationsToAdd);
+
+                        }                    
+                    }        
+                    numAdditionsInThisIteration += (copyOfcurrentImplications.size() - currentImplications.size()) ;
+                    secondaryVariables_At_DimensionOne.put(key,copyOfcurrentImplications );                
+                }            
+                if (numAdditionsInThisIteration==ZERO) break;
+            }
         }
+        
         
         for ( String dom:  dominatedVariables){
             modifiedObjFuncMap.put (dom, DOUBLE_ZERO );
