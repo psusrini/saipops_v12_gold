@@ -5,6 +5,7 @@
 package com.mycompany.saipops_v12_gold.callbacks;
              
 import static com.mycompany.saipops_v12_gold.Constants.*;
+import com.mycompany.saipops_v12_gold.HeuristicEnum;
 import static com.mycompany.saipops_v12_gold.HeuristicEnum.*;
 import static com.mycompany.saipops_v12_gold.Parameters.*;
 import com.mycompany.saipops_v12_gold.constraints.Attributes;
@@ -77,8 +78,8 @@ public class SAIPOPS_Callback extends IloCplex.BranchCallback{
                     }
                 }
                 
-                Sai_BASE_Heuristic branchingHeuristic  =   new Sai_POPS_Heuristic(   attributes , objectiveFunctionMap );
-                         
+                IBranchHeuristic branchingHeuristic  =   new Sai_POPS_Heuristic(   attributes , objectiveFunctionMap );
+                                                          
                 //always run the heuristic even if we use native cplex
                 branchingVar = branchingHeuristic .getBranchingVariable();
                                    

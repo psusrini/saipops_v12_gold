@@ -47,10 +47,13 @@ public class NeutralVariableFixer {
             fixings.put (nVar, false);
         }
         
-        TreeSet<String> emptySet =new TreeSet<String> () ;
-        for (LowerBoundConstraint lbc : lbcList){
-            lbc.applyKnownFixings(fixings, emptySet );
+        if (!fixings.isEmpty()){
+            TreeSet<String> emptySet =new TreeSet<String> () ;
+            for (LowerBoundConstraint lbc : lbcList){
+                lbc.applyKnownFixings(fixings, emptySet );
+            }
         }
+        
         
     }
     

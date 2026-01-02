@@ -50,5 +50,41 @@ public class MathUtils {
     public static  boolean isEqual (double x1, double x2) {
         return Math.abs(x1 -x2) < EPSILON_SMALL ;
     }
+             
+    public static   TreeSet<String> getMaxiMinFrequency(Set<String>  candidates,  TreeMap<String, Double>  mapOne,  TreeMap<String, Double>  mapTwo ) {
+        TreeSet<String >  winners = new  TreeSet<String>();
+        
+        double smallestKnownFreq = DOUBLE_ZERO; 
+        double largestKnownFreq = DOUBLE_ZERO;
+        
+        //find var whose smaller freq is as large as possible
+        
+        
+        for (String candidate:  candidates){
+            Double pFreq = mapOne.get (candidate );
+            if (null == pFreq) pFreq = DOUBLE_ZERO;
+            Double nFreq = mapTwo.get (candidate );
+            if (null == nFreq) nFreq = DOUBLE_ZERO;
+            
+            pFreq= Math.abs (pFreq );
+            nFreq= Math.abs (nFreq);
+            
+            double smaller = Math.min (pFreq,  nFreq);
+            double larger = Math.max (pFreq,  nFreq);
+            
+            if ( (smaller >smallestKnownFreq ) || (  isEqual(smaller , smallestKnownFreq) && largestKnownFreq<larger  )) {
+                winners.clear();
+                smallestKnownFreq =smaller;
+                largestKnownFreq= larger;
+                winners.add (candidate );
+            }  else if (isEqual(smaller , smallestKnownFreq) && isEqual(largestKnownFreq,larger)  ) {
+                winners.add (candidate );
+            }
+              
+        }
+               
+        return winners;
+    }   
+    
     
 }

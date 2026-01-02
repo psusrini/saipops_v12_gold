@@ -37,7 +37,7 @@ public class CplexUtils {
        
         cplex.setParam( IloCplex.Param.MIP.Strategy.HeuristicFreq , HEUR_FREQ);
         
-        //cplex.setParam( IloCplex.Param.MIP.Strategy.VariableSelect, BRANCHING_STRATEGY) ;
+        cplex.setParam( IloCplex.Param.MIP.Strategy.VariableSelect, BRANCHING_STRATEGY) ;
         
     }
      

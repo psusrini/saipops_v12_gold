@@ -8,6 +8,7 @@ import static com.mycompany.saipops_v12_gold.Constants.*;
 import static com.mycompany.saipops_v12_gold.Parameters.*;
 import com.mycompany.saipops_v12_gold.SignificanceEnum;
 import static com.mycompany.saipops_v12_gold.SignificanceEnum.*;
+import com.mycompany.saipops_v12_gold.utils.MathUtils;
 import static java.lang.System.exit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +50,7 @@ public class LowerBoundConstraint {
     public void getNeutralvariables (Set<String> neutralVarsWithPlusCoeff , Set<String> neutralVarsWithMinusCoeff){
                 
         for (Triplet triplet: coefficientList){
-            if (triplet.objectiveCoeffcient == DOUBLE_ZERO){
+            if (MathUtils.isEqual (triplet.objectiveCoeffcient , DOUBLE_ZERO)){
                 if (triplet.constraintCoefficient < ZERO){
                     neutralVarsWithMinusCoeff.add (triplet.varName);
                 }else {
@@ -104,11 +105,12 @@ public class LowerBoundConstraint {
         
         int numPrimaryVariablesExamined     = ZERO; 
         int numSecondaryVariablesExamined     = ZERO; 
+         
         
         attr.constraintName = this.constraint_Name;
-        attr.constraintSize =coefficientList.size();
+        attr.constraintSize = coefficientList.size();
         
-        for (int index = ZERO; index < attr.constraintSize ; index ++ ){    
+        for (int index = ZERO; index < coefficientList.size() ; index ++ ){    
             
             Triplet triplet = this.coefficientList.get(index);    
             double thisCoeff = triplet.constraintCoefficient;
@@ -116,7 +118,7 @@ public class LowerBoundConstraint {
             double thisObjMagn = Math.abs (   triplet.objectiveCoeffcient );
                                                 
             if (triplet.significance.equals(PRIMARY)  ){
-              
+                
                 if (triplet.isFractional  )    {
                     attr.fractionalPrimaryVariables  .add( triplet.varName  );                                        
                 }  
@@ -157,11 +159,12 @@ public class LowerBoundConstraint {
                 }
                 
             }   else {
+                
                 //neutral var
                 if (triplet.isFractional){
-                    attr.fractionalNeutralVariables .add( triplet.varName  );
-                }  
-                                        
+                    attr.fractionalNeutralVariables.add (triplet.varName  );
+                }
+                                                        
             }//triplet significance if else
         }//for loop walking through coefficients in the constraint
                

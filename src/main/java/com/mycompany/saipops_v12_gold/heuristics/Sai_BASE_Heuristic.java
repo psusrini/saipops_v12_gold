@@ -18,21 +18,24 @@ import java.util.TreeSet;
  *
  * @author sst119
  */
-public abstract class Sai_BASE_Heuristic {
+public abstract class Sai_BASE_Heuristic  implements IBranchHeuristic {
      
     protected  TreeMap<String, Double>  objectiveFunctionMap;
    
     protected  TreeMap<String , Double>  fractionalNeutralVariables_WithScore   = new  TreeMap<String , Double>   ();
-    
+   
     //secondary variable and the primary variables it will fix if the lowestKnownSecondaryDimension is 1 
     protected  TreeMap<String , TreeSet<String>  >  secondaryVariables_At_DimensionOne   = new  TreeMap<String , TreeSet<String>  >   ();
+    protected  TreeSet<String>  allSecondaryVariables = new TreeSet<String> ();
    
     protected int lowestKnownFractionalPrimaryDimension = BILLION;
     protected  TreeMap<String , Double>  fractionalPrimaryVariablesWithFrequency_AtLowestDim   = new  TreeMap<String , Double>   ();
-    //primary variable and the secondary variables it will fix if the lowestKnownFractionalPrimaryDimension is 1 
-    protected  TreeMap<String , TreeSet<String>  >  primaryVariables_At_DimensionOne   = new  TreeMap<String , TreeSet<String>  >   ();
-     
     
+
+    //primary variable and the secondary variables it will fix if the lowestKnownFractionalPrimaryDimension is 1 
+    //needed if recursively finding dominated variables in the down branch
+    //protected  TreeMap<String , TreeSet<String>  >  primaryVariables_At_DimensionOne   = new  TreeMap<String , TreeSet<String>  >   ();
+      
     public Sai_BASE_Heuristic (  Set<Attributes> attributes ,     
             TreeMap<String, Double>  objectiveFunctionMap  ){
                       
@@ -42,7 +45,7 @@ public abstract class Sai_BASE_Heuristic {
         for (Attributes attr: attributes){
             
             if (attr.hasFractionalNeutralVariables()){
-                double score = Math.pow( TWO, TWO - attr.constraintSize);
+                double score = Math.pow( TWO, ONE -  attr.constraintSize  );  
                 for (String neutralVar : attr.fractionalNeutralVariables){
                     //
                     Double currentScore =  fractionalNeutralVariables_WithScore.get (neutralVar)  ;
@@ -50,18 +53,20 @@ public abstract class Sai_BASE_Heuristic {
                     fractionalNeutralVariables_WithScore.put (neutralVar,score+ currentScore)  ;
                 }
             }
-            
+          
             if (attr.allSecondaryVariables.size() > ZERO){ 
+                
+                allSecondaryVariables.addAll(attr.allSecondaryVariables);
                                 
-                    if (ONE == attr.secondaryDimension){
-                        for (String sVar : attr.allSecondaryVariables){
-                            //for every secondary var, append the list of primary variables in this constraint
-                            TreeSet<String> current = secondaryVariables_At_DimensionOne.get (sVar) ;
-                            if (current ==null)   current=     new TreeSet<String> ();
-                            current.addAll( attr.allPrimaryVariables);
-                            secondaryVariables_At_DimensionOne.put (sVar, current) ; 
-                        }                        
-                    }       
+                if (ONE == attr.secondaryDimension){
+                    for (String sVar : attr.allSecondaryVariables){
+                        //for every secondary var, append the list of primary variables in this constraint
+                        TreeSet<String> current = secondaryVariables_At_DimensionOne.get (sVar) ;
+                        if (current ==null)   current=     new TreeSet<String> ();
+                        current.addAll( attr.allPrimaryVariables);
+                        secondaryVariables_At_DimensionOne.put (sVar, current) ; 
+                    }                        
+                }       
                            
             }
             
@@ -84,19 +89,19 @@ public abstract class Sai_BASE_Heuristic {
                 }                                                                               
             } 
             
-            if (ONE == attr.primaryDimension){
+            /*if (ONE == attr.primaryDimension){
                 for (String var : attr.allPrimaryVariables){
                     TreeSet<String>  currentSet =  primaryVariables_At_DimensionOne .get(var);
                     if (null == currentSet)currentSet= new  TreeSet<String>();
                     currentSet.addAll (attr.allSecondaryVariables) ;
                     primaryVariables_At_DimensionOne .put(var,currentSet); 
                 }                       
-            } 
+            } */
             
         }//for all attrs
            
     }//end constructor method
-        
+      
     public String getBranchingVariable() {
         TreeSet<String>  candidates  ;
         
@@ -111,7 +116,17 @@ public abstract class Sai_BASE_Heuristic {
     }
     
     protected abstract TreeSet<String>  selectBranchingVariable  ();
+ 
+    protected TreeSet<String>  getApexVariables  (){
+        TreeSet<String>  winners = new  TreeSet<String> ();
+        
+        winners.addAll( this.fractionalPrimaryVariablesWithFrequency_AtLowestDim.keySet());
+        winners.removeAll( this.allSecondaryVariables);
+        
+        return winners;        
+    }
     
+    /*
     protected TreeSet<String>  getApexVariables  ( TreeSet<String>  candidates ){
        
         TreeSet<String> dominatedVariables = new TreeSet<String>   ();
@@ -151,13 +166,11 @@ public abstract class Sai_BASE_Heuristic {
                                 
         return apex;        
     }
+    */
     
     // 
-    private TreeSet<String>  getMOMS  (){
-        TreeSet<String>  candidates   = new TreeSet<String> ();
-        candidates.addAll(fractionalNeutralVariables_WithScore.keySet());
-        //get candidates with highest score
-        return     MathUtils.getMaxObjMagn(candidates, fractionalNeutralVariables_WithScore  ) ;        
+    private TreeSet<String>  getMOMS  (){        
+        return     MathUtils.getMaxObjMagn(fractionalNeutralVariables_WithScore.keySet(), fractionalNeutralVariables_WithScore );        
     }
      
     

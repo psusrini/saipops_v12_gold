@@ -19,7 +19,8 @@ import java.util.TreeSet;
 public class Attributes {
     
     public String constraintName ;
-    
+    public int constraintSize ;
+   
     public int primaryDimension = BILLION; 
     public TreeSet<String   >  fractionalPrimaryVariables    = new TreeSet<String   > ();
     public TreeSet<String   >  allPrimaryVariables    = new TreeSet<String   > ();
@@ -27,13 +28,12 @@ public class Attributes {
     public int secondaryDimension = BILLION; 
     public TreeSet<String   >  fractionalSecondaryVariables    = new TreeSet<String   > ();
     public TreeSet<String   >  allSecondaryVariables    = new TreeSet<String   > ();
-        
-    public int constraintSize = -ONE;
+       
     public TreeSet<String>  fractionalNeutralVariables = new TreeSet<String>(); 
-    
+   
     public boolean hasFractionalVariables () {
         return fractionalPrimaryVariables .size() +  fractionalSecondaryVariables.size()  + 
-                fractionalNeutralVariables .size()   > ZERO;
+                fractionalNeutralVariables .size()  > ZERO;
     } 
     
     public boolean hasFractionalPrimaryVariables () {
@@ -43,9 +43,10 @@ public class Attributes {
     public boolean hasFractionalSecondaryVariables () {
         return this.fractionalSecondaryVariables.size()   > ZERO;
     }
-   
+     
     public boolean hasFractionalNeutralVariables () {
-        return fractionalNeutralVariables.size()  > ZERO;
+        return fractionalNeutralVariables .size() > ZERO;
     }
+    
     
 }

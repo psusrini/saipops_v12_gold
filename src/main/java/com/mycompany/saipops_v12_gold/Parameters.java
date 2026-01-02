@@ -40,20 +40,20 @@ public class Parameters {
         
     }
     
-    public static final int  MIP_EMPHASIS = 3 ;
+    public static final int  MIP_EMPHASIS = 2 ;
     
     //cplex config related
     public static final int  HEUR_FREQ  = -1 ;    
     public static final int  FILE_STRATEGY= 3;  
     public static final int MAX_THREADS =  System.getProperty("os.name").toLowerCase().contains("win") ? 1 : 32;
     
-    //public static final int BRANCHING_STRATEGY = 3; //2	CPX_VARSEL_PSEUDO	Branch based on pseudo costs , 3 = strong 
+    public static final int BRANCHING_STRATEGY = 3; //2	CPX_VARSEL_PSEUDO	Branch based on pseudo costs , 3 = strong 
      
     public static final int MAX_PERIODS =5;
     public static final int PERIOD_DURATION_IN_SECONDS =60*60; //60 minute periods
      
     public static final HeuristicEnum HEURISTIC_TO_USE = HeuristicEnum.POPS;
-    public static final Boolean USE_OPTIMISTIC_DIMENSIONING = true;
+    public static final Boolean USE_OPTIMISTIC_DIMENSIONING = false ;
     
     public static final String PRESOLVED_MIP_FILENAME =              
             System.getProperty("os.name").toLowerCase().contains("win") ?
@@ -70,7 +70,7 @@ public class Parameters {
             
     // "c:\\temp\\mips\\ds.pre.sav":    
     
-      "c:\\temp\\mips\\hanoi5.pre.sav":  
+    //  "c:\\temp\\mips\\hanoi5.pre.sav":  
             
     //   "c:\\temp\\mips\\ivu52.pre.sav":
             
@@ -85,7 +85,7 @@ public class Parameters {
             
             
     //    "c:\\temp\\mips\\p6b.pre.sav":
-    // "c:\\temp\\mips\\protfold.pre.sav":
+      "c:\\temp\\mips\\protfold.pre.sav":
             
     //    "c:\\temp\\mips\\queens-30.pre.sav":
             

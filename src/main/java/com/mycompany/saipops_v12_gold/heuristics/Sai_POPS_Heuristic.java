@@ -6,7 +6,9 @@ package com.mycompany.saipops_v12_gold.heuristics;
     
  
 import static com.mycompany.saipops_v12_gold.Constants.*; 
+import static com.mycompany.saipops_v12_gold.Parameters.PERF_VARIABILITY_RANDOM_GENERATOR;
 import com.mycompany.saipops_v12_gold.constraints.*;
+import com.mycompany.saipops_v12_gold.heuristics.Sai_BASE_Heuristic;
 import com.mycompany.saipops_v12_gold.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,34 +23,34 @@ import java.util.TreeSet;
  * 
  *  
  */
-public   class Sai_POPS_Heuristic  extends Sai_BASE_Heuristic{
+public   class Sai_POPS_Heuristic  extends Sai_BASE_Heuristic   {
     //
-       
+    
     public Sai_POPS_Heuristic (  Set<Attributes> attributes ,     
             TreeMap<String, Double>  objectiveFunctionMap  ){
-         super ( attributes ,     objectiveFunctionMap);
+        super ( attributes ,     objectiveFunctionMap);
     } 
+
     
     @Override
-    protected TreeSet<String>  selectBranchingVariable  (){
+    protected  TreeSet<String>  selectBranchingVariable  (){
         TreeSet<String>  candidates = new  TreeSet<String> ();
-         
+        
         candidates.addAll( this.fractionalPrimaryVariablesWithFrequency_AtLowestDim.keySet());
         
-        TreeSet<String>  apex= this.getApexVariables(candidates) ;                
+        TreeSet<String>  apex= this.getApexVariables( ) ;                
         if (!apex.isEmpty())candidates=apex;
-           
+
         //largest objective 
         candidates = MathUtils.getMaxObjMagn(candidates, getBCP_ObjMagnMap(candidates) )  ;  
-        
+
         //tie break on highest frequency.
         candidates = MathUtils.getMaxObjMagn(candidates, this.fractionalPrimaryVariablesWithFrequency_AtLowestDim )  ;  
-        
-        return candidates;
-    }   
-  
-  
        
+        return candidates;
+    }  
+    
+   
     private TreeMap<String, Double>   getBCP_ObjMagnMap ( TreeSet<String>  candidates ){
        
         TreeMap<String, Double> modifiedObjFuncMap = new TreeMap<String, Double> ();
